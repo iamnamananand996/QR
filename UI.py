@@ -11,6 +11,7 @@ from imutils.video import VideoStream, WebcamVideoStream
 import time
 import argparse
 import pytesseract
+import extractor
 
 
 class PhotoBoothApp:
@@ -70,18 +71,25 @@ class PhotoBoothApp:
 
     def takeSnapshot(self):
         self.answer.delete('0', 'end')
+        proimg = self.frame.copy()
         ts = datetime.datetime.now()
         filename = "{}.jpg".format(ts.strftime("%Y-%m-%d_%H-%M-%S"))
-        # print("Output", self.frame.copy())
-        # print("Type", type(self.frame.copy()))
-        img = Image.open("2.png")
+        
+        #print("Output", self.frame.copy())
+        #print("Type", type(self.frame.copy()))
+        """
+        img = Image.open("images/25.jpg")
         text = pytesseract.image_to_string(self.frame.copy())
         print("answer", text)
         p = os.path.sep.join((self.outputPath, filename))
-
+        #print(type(self.frame.copy()))
         # save the file
-        cv2.imwrite(p, self.frame.copy())
-        print("[INFO] saved {}{}".format(filename, p))
+        """
+        p = os.path.sep.join((self.outputPath, filename))
+        cv2.imwrite(p, proimg)
+        img = cv2.imread(p)
+        text = extractor.main(img)
+        print("[INFO] saved {}".format(filename))
         if text is '':
             self.answer.insert(1, "no data found")
         else:
